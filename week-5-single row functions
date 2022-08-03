@@ -1,0 +1,236 @@
+                                                                      Lab Cycle - 2 
+     Write Select statements for the following queries using SQL single row functions:
+ 1. Display the department names in the lower case but the initial must be in uppercase
+select initcap(dname) from dept;
+INITCAP(DNAME)
+--------------
+Accounting
+Research
+Sales
+Operations
+It
+Cse
+
+6 rows selected.
+
+2. Determine the ‘ename’, ‘job’, ‘sal’ rename the title as Job-sal the output must be Job-Sal as SMITH [CLERK] RS.2000
+select (ename||'['||job||']'||' '||'Rs'||sal) job_sal from emp;
+JOB_SAL
+----------------------------------------------------------------
+KING[PRESIDENT] Rs5000
+BLAKE[MANAGER] Rs2850
+CLARK[MANAGER] Rs2450
+JONES[MANAGER] Rs2975
+MARTIN[SALESMAN] Rs1250
+ALLEN[SALESMAN] Rs1600
+TURNER[SALESMAN] Rs1500
+JAMES[CLERK] Rs950
+WARD[SALESMAN] Rs1250
+FORD[ANALYST] Rs3000
+SMITH[CLERK] Rs800
+
+JOB_SAL
+----------------------------------------------------------------
+SCOTT[ANALYST] Rs3200
+ADAMS[CLERK] Rs1100
+MILLER[CLERK] Rs1300
+
+14 rows selected.
+3. For each department, Count the number of times S occurs in department names
+select dname,length(dname)-length(replace(lower(dname),'s','')) count_of_s from dept;
+DNAME          COUNT_OF_S
+-------------- ----------
+ACCOUNTING              0
+RESEARCH                1
+SALES                   2
+OPERATIONS              1
+it                      0
+cse                     1
+
+6 rows selected.
+4. Write a query to display the department name which does not contain any employees.
+(select dname from dept ) MINUS (select dname from dept d,emp e where e.deptno=d.deptno)
+
+DNAME
+--------------
+OPERATIONS
+cse
+it
+5. Write a query to display all employee details where employee was joined in year date wise 1980 and 1990 and 2nd week of every month
+select * from emp where to_char(hiredate,'yyyy')>1980 and to_char(hiredate,'yyyy')<1990 and to_char(hiredate,'w')=2;
+     EMPNO ENAME      JOB              MGR HIREDATE         SAL       COMM
+---------- ---------- --------- ---------- --------- ---------- ----------
+    DEPTNO
+----------
+      7782 CLARK      MANAGER         7839 09-JUN-81       2450
+        10
+
+      7844 TURNER     SALESMAN        7698 08-SEP-81       1500          0
+        30
+
+      7788 SCOTT      ANALYST         7566 09-DEC-82       3200
+        20
+
+
+     EMPNO ENAME      JOB              MGR HIREDATE         SAL       COMM
+---------- ---------- --------- ---------- --------- ---------- ----------
+    DEPTNO
+----------
+      7876 ADAMS      CLERK           7788 12-JAN-83       1100
+        20
+
+6. Write an SQL statement to convert the current date to new date picture ex: MONDAY 10th June 2005 10:30.00 PM
+select to_char(sysdate,'DAY ddth month yyyy hh:mi:ss pm') from dual;
+TO_CHAR(SYSDATE,'DAYDDTHMONTHYYYYHH:MI:SS
+-----------------------------------------
+TUESDAY   12th july      2022 02:08:41 pm
+7. Write a query to display all employee details who joined last Wednesday of a month and experience should be greater than 20 months.
+select * from emp where ((sysdate-hiredate)/30)>20 and to_char(hiredate,'dd')>24
+EMPNO ENAME      JOB              MGR HIREDATE         SAL       COMM
+------ ---------- --------- ---------- --------- ---------- ----------
+DEPTNO
+------
+  7654 MARTIN     SALESMAN        7698 28-SEP-81       1250       1400
+    30
+8. Write a query to calculate the service of employees rounded to years
+select ename,(sysdate-hiredate)/365 service_of_employ from emp;
+ENAME      SERVICE_OF_EMPLOY
+---------- -----------------
+KING              40.6972798
+BLAKE              41.245225
+CLARK             41.1383757
+JONES             41.3246771
+MARTIN            40.8342661
+ALLEN             41.4370058
+TURNER            40.8890606
+JAMES             40.6534442
+WARD              41.4315264
+FORD              40.6534442
+SMITH              41.615088
+
+ENAME      SERVICE_OF_EMPLOY
+---------- -----------------
+SCOTT             39.6370058
+ADAMS             39.5438551
+MILLER            40.5137182
+
+14 rows selected.
+
+9. Write a query that will display a list of employees and their salary and the comments as follows: 
+a. If the salary is more than 1500 then display “above target”
+b. If the salary is equal to 1500 then display “on the target”
+ c. If the salary is less than 1500 then display “below the target”
+create table emp2 as select ename,sal from emp;
+table created
+alter table emp2 add sal_statement varchar(30);
+table created
+ update emp2 set sal_statement='above_target' where sal>1500;
+7 rows updated.
+ update emp2 set sal_statement='on_the_target' where sal=1500;
+1 row updated.
+ update emp2 set sal_statement='below_target' where sal<1500;
+6 rows updated.
+SQL> select * from emp2;
+
+ENAME             SAL SAL_STATEMENT
+---------- ---------- ------------------------------
+KING             5000 above_target
+BLAKE            2850 above_target
+CLARK            2450 above_target
+JONES            2975 above_target
+MARTIN           1250 below_target
+ALLEN            1600 above_target
+TURNER           1500 on_the_target
+JAMES             950 below_target
+WARD             1250 below_target
+FORD             3000 above_target
+SMITH             800 below_target
+
+ENAME             SAL SAL_STATEMENT
+---------- ---------- ------------------------------
+SCOTT            3200 above_target
+ADAMS            1100 below_target
+MILLER           1300 below_target
+
+14 rows selected.
+10. Display all employee names, employee number, department names & salary grades for all employees who are working in department 30.
+select ename,empno,dname,grade from emp e,salgrade s,dept d where d.deptno=e.deptno and d.deptno=30 and  sal between losal and hisal;
+ENAME           EMPNO DNAME               GRADE
+---------- ---------- -------------- ----------
+BLAKE            7698 SALES                   4
+MARTIN           7654 SALES                   2
+ALLEN            7499 SALES                   3
+TURNER           7844 SALES                   3
+JAMES            7900 SALES                   1
+WARD             7521 SALES                   2
+
+6 rows selected.
+11. Display the time of day.
+TO_CHAR(SYS
+-----------
+12:51:30 pm
+12. Find all employees who earn a salary greater than the average salary of their departments.
+SQL>  select ename from emp e,dept d where d.deptno=e.deptno and sal>some(select avg(sal) from emp e1,dept d1 where e1.deptno=d1.deptno and d.deptno=d1.deptno group by dname);
+
+ENAME
+----------
+KING
+JONES
+SCOTT
+FORD
+BLAKE
+ALLEN
+
+6 rows selected.
+13. Write a query to find the name of the manager and number of sub-ordinates.
+SQL> select e.ename,count(t.job) from emp e,emp t where e.job='MANAGER' and e.empno=t.mgr group by e.ename;
+
+ENAME      COUNT(T.JOB)
+---------- ------------
+BLAKE                 5
+CLARK                 1
+JONES                 2
+14. Write a query to find out the manager having Maximum number of sub-ordinates.
+select e.ename,count(t.job) from emp e,emp t where e.job='MANAGER' and e.empno=t.mgr group by e.ename having count(t.job)=
+(select max(count(e.ename)) from emp e,emp t where e.job='MANAGER' and e.empno=t.mgr group by e.ename)
+ENAME      COUNT(T.JOB)
+---------- ------------
+BLAKE                 5
+15. Write a query to find out the top three earners.
+ select e1.ename from emp e1 where(select count(*) from emp e2 where e1.sal<e2.sal)<3;
+
+ENAME
+----------
+KING
+FORD
+SCOTT
+16. Write a query to find out the employees who have joined before their managers.
+
+  1* select e.ename,t.ename from emp e,emp t where e.empno=t.mgr and t.hiredate<e.hiredate
+SQL> /
+
+ENAME      ENAME
+---------- ----------
+BLAKE      ALLEN
+BLAKE      WARD
+KING       BLAKE
+KING       CLARK
+KING       JONES
+FORD       SMITH
+17. Write a query to find out the year, where most people join in the company displays the year
+and No. of Employees.
+select to_char(hiredate,'yy'),count(*) from emp group by to_char(hiredate,'yy') 
+having count(*)=
+(select max(count(to_char(hiredate,'yy'))) from emp group by to_char(hiredate,'yy'))
+TO   COUNT(*)
+-- ----------
+81         10
+18. Write a query which will return the DAY of the week.(ie. MONDAY), for any date entered in the format: DD.MM.YY.
+select to_char(to_date('&date','dd-mm-yyyy'),'day') DAY from dual;
+Enter value for date: 22-11-2002
+old   1: select to_char(to_date('&date','dd-mm-yyyy'),'day') DAY from dual
+new   1: select to_char(to_date('22-11-2002','dd-mm-yyyy'),'day') DAY from dual
+
+DAY
+---------
+friday
